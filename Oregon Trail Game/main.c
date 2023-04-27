@@ -91,6 +91,27 @@ int main(void) {
         //Weather
             WeatherUDF();
             
+        //Moved death to top so if you die all this other stuff doesn't happpen
+        //Death
+            if(i == 3 || i == 5 || i == 9){
+                deathChance = rand() % 11; //0-10
+            // 8 is unlucky
+                if( deathChance == 8){
+                    DeathUDF();
+                        
+                    printf("You Died :(\n");
+                    printf("You lost on Day %d\n", i);
+                        
+                    printf("\nWant to restart? y/n:");
+                    scanf(" %c", &restart);
+                    printf("\n");
+                    printf("-----------------------");
+                    printf("\n\n\n\n");
+                        
+                    break;
+                }
+            }
+            
         //Supply days
             if(i % 2 == 0){
                 SuppliesUDF(&waterPtr, &foodPtr);
@@ -98,6 +119,18 @@ int main(void) {
                 water += waterPtr;
                 food += foodPtr;
             }
+        //Makes harder- too much food or water gets lost
+            if(water > 10){
+                printf("One of your water barrels sprung a leak. You lost 5 waters!\n");
+                water -= 5;
+            }
+           
+            if(food > 10){
+                printf("Racoons ransacked your food supply. You lost 5 foods!\n");
+                food -= 5;
+            }
+            
+            
         //Stops water from being negative
             if(water < 0){
                 water = 0;
@@ -139,27 +172,13 @@ int main(void) {
                 
                 printf("\nWant to restart? y/n:");
                 scanf(" %c", &restart);
-                printf("\n\n\n\n\n");
+                printf("\n");
+                printf("-----------------------");
+                printf("\n\n\n");
                 
                 break;
             }
-        //Death
-            if(i == 3 || i == 5 || i == 9){
-                deathChance = rand() % 11; //0-10
-            // 8 is unlucky
-                if( deathChance == 8){
-                    DeathUDF();
-                    
-                    printf("You Died :(\n");
-                    printf("You lost on Day %d\n", i);
-                    
-                    printf("\nWant to restart? y/n:");
-                    scanf(" %c", &restart);
-                    printf("\n\n\n\n\n");
-                    
-                    break;
-                }
-            }
+
         //Disease
             if(i==3){
                 diseaseChance = rand() % 5;
@@ -177,7 +196,9 @@ int main(void) {
                         
                         printf("\nWant to restart? y/n:");
                         scanf(" %c", &restart);
-                        printf("\n\n\n\n\n");
+                        printf("\n");
+                        printf("-----------------------");
+                        printf("\n\n\n");
                         
                         break;
                     }
@@ -212,7 +233,6 @@ void StateMenuUDF(void){
     printf("1. Oregon\n");
     printf("2. California\n");
 }
-
 
 void WeatherUDF(void){
     int weatherType;
@@ -278,7 +298,6 @@ void SuppliesUDF(int* waterPtr, int* foodPtr){
         
 }
 
-
 int BanditsUDF(void) {
     
     int numBandits, numAliveBandits;
@@ -313,6 +332,8 @@ char NextDayUDF(int day){
     
     else{
         printf("\nYou chose to quit on Day %d\n", day);
+        printf("-----------------------");
+        printf("\n\n\n");
        
         return 'n';
     }
@@ -474,7 +495,8 @@ char WinnerUDF(char charName[10], char state[12]){
     printf("\nCongraulations %s you survived the Oregon Trail by making it to %s!\n", charName, state);
     printf("Want to test your luck again? y/n: ");
     scanf(" %c", &restart);
-    printf("\n\n\n\n\n");
+    printf("-----------------------");
+    printf("\n\n\n");
     
     if((restart == 'y')||(restart == 'Y')){
         return 'y';
