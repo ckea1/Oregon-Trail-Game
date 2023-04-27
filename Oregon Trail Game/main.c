@@ -16,15 +16,15 @@ void WeatherUDF(void);
 void SuppliesUDF(int* waterPtr, int* foodPtr); //- every two days (modulo) easier
 int BanditsUDF(void); //- they come day 5 medium
 char NextDayUDF(int day);
-void GoodPersonUDF(int *waterPtr, int *foodPtr);
+void GoodPersonUDF(int *waterPtr, int *foodPtr, char state[12]);
 void DeathUDF(void); //day 3 or 9 roll a certain number 8
 int DiseaseUDF(int* counterPointer); //- day 3 or 9 roll a certain number 4/10 roll for a number to see chance of suevival 3/5(Death)
-void StateMenuUDF(char *statePtr[11]); //Add a menu to choose between going to California or to Oregon
+void StateMenuUDF(void); //Add a menu to choose between going to California or to Oregon
 //EquipmentDamageUDF- day 4, 6 medium
 //TradingUDF- 2, 6, 7, 9 medium
 //FaithUDF- every day choice y/n gives easier chance of somethings happening (Pray)
 //TurnsUDF - (wrong or right turns) random hard
-char WinnerUDF(char charName[10]); //- (made it to oregon) last day
+char WinnerUDF(char charName[10], char state[12]); //- (made it to oregon) last day
 //make a "Miles to Oregon" counter- start at 150 decrease by 15 every day- FINISHED
 
 
@@ -32,6 +32,7 @@ int main(void) {
     
     char charName[10];
     char state[12];
+    int stateSelect;
     int i;
     int water = 4, food = 8;
     int waterPtr = 0, foodPtr = 0;
@@ -57,8 +58,23 @@ int main(void) {
         printf("\nWelcome %s!\n", charName);
         
     //Choose between going to Oregon or Cali
-        StateMenuUDF(&state[0]);
-        printf("%s", state);
+        StateMenuUDF();
+        scanf("%d", &stateSelect);
+        switch(stateSelect){
+            case 1:
+                printf("You are choosing to go to Oregon! Plenty of farmland there!\n");
+                strcpy(state, "Oregon");
+                break;
+            case 2:
+                printf("You choose California! You gold digger!\n");
+                strcpy(state, "California");
+                break;
+                
+            default:
+                printf("You are choosing to go to Oregon! Plenty of farmland there!\n");
+                strcpy(state, "Oregon");
+                break;
+        }
         
         
         banditDay = (rand() % 8) + 3; //10
@@ -70,7 +86,7 @@ int main(void) {
             
             
             printf("\nDay %d\n", i);
-            printf("Miles to Oregon: %d\n", milesUntil);
+            printf("Miles to %s: %d\n", state,  milesUntil);
             
         //Weather
             WeatherUDF();
@@ -92,7 +108,7 @@ int main(void) {
             }
         //Good People are Welcome!
             if (water < 1 || food < 1){
-                GoodPersonUDF(&waterPtr, &foodPtr);
+                GoodPersonUDF(&waterPtr, &foodPtr, state);
                 
                 water += waterPtr;
                 food += foodPtr;
@@ -107,12 +123,12 @@ int main(void) {
                 stolenSuplies = BanditsUDF();
             //Makes if food has more supplies get stolen from it and vice versa
                 if(food > water){
-                    printf("Bandits took %d food\n", stolenSuplies);
+                    printf("Bandits took %d food\n\n", stolenSuplies);
                     food -= stolenSuplies;
                 }
                 
                 else{
-                    printf("Bandits took %d water\n", stolenSuplies);
+                    printf("Bandits took %d water\n\n", stolenSuplies);
                     water -= stolenSuplies;
                 }
             }
@@ -129,7 +145,7 @@ int main(void) {
             }
         //Death
             if(i == 3 || i == 5 || i == 9){
-                deathChance = rand() % 10; //0-9
+                deathChance = rand() % 11; //0-10
             // 8 is unlucky
                 if( deathChance == 8){
                     DeathUDF();
@@ -177,7 +193,7 @@ int main(void) {
             }
         //End Screen
             if(i == 10){
-                restart = WinnerUDF(charName);
+                restart = WinnerUDF(charName, state);
                 
             }
             
@@ -190,24 +206,11 @@ int main(void) {
     return 0;
 }
 
-void StateMenuUDF(char *statePtr[11]){
-    int stateSelect;
+void StateMenuUDF(void){
     
     printf("Choose which state you are gonna be traveling to!\n");
     printf("1. Oregon\n");
     printf("2. California\n");
-    scanf("%d", &stateSelect);
-    
-    switch(stateSelect){
-        case 1:
-            *statePtr = "Oregon";
-            break;
-            
-        case 2:
-            *statePtr = "California";
-            break;
-    }
-    
 }
 
 
@@ -316,7 +319,7 @@ char NextDayUDF(int day){
     
 }
 
-void GoodPersonUDF(int *waterPtr, int *foodPtr){
+void GoodPersonUDF(int *waterPtr, int *foodPtr, char state[12]){
     // print statements for each (rand num for name and then switch statement)
     // print statements for how much food/water
     char userSelect = 'y';
@@ -384,7 +387,7 @@ void GoodPersonUDF(int *waterPtr, int *foodPtr){
         *waterPtr = rand() % 6;
         
         printf("Well lucky you I happen to have %d water and %d food to spare!\n", *waterPtr, *foodPtr);
-        printf("Hope this helps you on your journey to Oregon!\n\n");
+        printf("Hope this helps you on your journey to %s!\n\n", state); //FIXME
     }
    
 }
@@ -465,10 +468,10 @@ int DiseaseUDF(int* counterPointer){
     
 }
 
-char WinnerUDF(char charName[10]){
+char WinnerUDF(char charName[10], char state[12]){
     char restart = 'y';
     
-    printf("\nCongraulations %s you survived the Oregon Trail by making it to Oregon!\n", charName);
+    printf("\nCongraulations %s you survived the Oregon Trail by making it to %s!\n", charName, state);
     printf("Want to test your luck again? y/n: ");
     scanf(" %c", &restart);
     printf("\n\n\n\n\n");
