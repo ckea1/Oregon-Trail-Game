@@ -85,7 +85,7 @@ int main(void) {
             food = food - 2;
             
             
-            printf("\nDay %d\n", i);
+            printf("\n------Day %d------\n", i);
             printf("Miles to %s: %d\n", state,  milesUntil);
             
         //Weather
@@ -180,7 +180,7 @@ int main(void) {
             }
 
         //Disease
-            if(i==3){
+            if(i==3 || i== 5){
                 diseaseChance = rand() % 5;
                     
                 if( diseaseChance == 3){
@@ -190,6 +190,8 @@ int main(void) {
                 if(diseaseCounter > -1 && diseaseCounter <= 4){
                     diseaseCounter--;
                     diseaseDeath = DiseaseUDF(&diseaseCounter);
+                    food--;
+                    water--;
                     
                     if (diseaseDeath == 1){
                         printf("You lost on Day %d\n", i);
@@ -347,6 +349,7 @@ void GoodPersonUDF(int *waterPtr, int *foodPtr, char state[12]){
     int NPCNameSelect;
     char NPCName[5];
     int i;
+    int giftChance;
     
     printf("A stranger appeared. Would you like to talk to them? y/n: \n");
     scanf(" %c", &userSelect);
@@ -355,7 +358,8 @@ void GoodPersonUDF(int *waterPtr, int *foodPtr, char state[12]){
         
         NPCNameSelect = rand() % 4;
         NPCNameSelect++; //1-4
-        
+ 
+    //Used this way off assinging and printing strings to show you can do it more than one way
         switch(NPCNameSelect){
             case 1:
                 NPCName[0] = 'J';
@@ -403,12 +407,21 @@ void GoodPersonUDF(int *waterPtr, int *foodPtr, char state[12]){
         
         printf("! Looks like you are a little low on supplies. Let me see if I have any to spare.\n");
         
-        *foodPtr = rand() % 6;
+        giftChance = rand() % 11;
         
-        *waterPtr = rand() % 6;
+        if(giftChance % 2 == 0){
+            *foodPtr = rand() % 6;
+            
+            *waterPtr = rand() % 6;
+            
+            printf("Well lucky you I happen to have %d water and %d food to spare!\n", *waterPtr, *foodPtr);
+            printf("Hope this helps you on your journey to %s!\n\n", state);
+        }
         
-        printf("Well lucky you I happen to have %d water and %d food to spare!\n", *waterPtr, *foodPtr);
-        printf("Hope this helps you on your journey to %s!\n\n", state); //FIXME
+        else{
+            printf("Sorry it doesn't look like I have any extra supplies. :( Hopefully I will see you another time though!\n\n");
+        }
+        
     }
    
 }
@@ -467,12 +480,12 @@ int DiseaseUDF(int* counterPointer){
                 break;
         }
     
-        printf("You caught %s. Hopefully you survive\n", diseaseName);
+        printf("\nYou caught %s. Hopefully you survive\n", diseaseName);
 }
     
     deathChance = rand() % 8;
     if(deathChance == 3){
-        printf("You Died to your disease.");
+        printf("You Died to your disease.\n");
         death = 1;
         
         return death;
@@ -480,6 +493,7 @@ int DiseaseUDF(int* counterPointer){
     
     if(deathChance != 8 && *counterPointer != 0){
         printf("Starting to feel better.\n");
+        printf("*You use 1 extra water and 1 extra food everday that you are sick*\n\n");
     }
     
     if(*counterPointer == 0){
